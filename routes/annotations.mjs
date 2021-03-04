@@ -1,17 +1,17 @@
-var express = require('express')
-var router = express.Router()
-let path = require('path')
-let fsPromises = require('fs/promises')
-let fs = require ('fs')
+import express from 'express'
+import path from 'path'
+import fsPromises from 'fs/promises'
+import fs from 'fs'
 
-let annotationsPath = path.join(__dirname, '..', 'annotations')
+var router = express.Router()
+let annotationsURL = new URL('annotations', import.meta.url)
 
 /* GET home page. */
 router.get('/:id', function(req, res, next) {
   let id = req.params.id
 
-  let f = path.join(annotationsPath, id, 'textfile1.txt')
-  fsPromises.readFile(f, { encoding: 'utf8' })
+  let u = new URL(`${id}/textfile1.txt`, annotationsURL)
+  fsPromises.readFile(u, { encoding: 'utf8' })
     .then(file => {
       let lines = file.split("\n")
       let output = lines.map(l => {
@@ -29,4 +29,4 @@ router.get('/:id', function(req, res, next) {
     })
 });
 
-module.exports = router;
+export default router

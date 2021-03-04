@@ -1,27 +1,25 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+import createError from 'http-errors'
+import express from 'express'
+import path from 'path'
+import cookieParser from 'cookie-parser'
+import logger from 'morgan'
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const audioRouter = require('./routes/audio');
-const annotationsRouter = require('./routes/annotations');
+import indexRouter from './routes/index.mjs'
+import audioRouter from './routes/audio.mjs'
+import annotationsRouter from './routes/annotations.mjs'
 
-const md = require('./md')
+import md from './md.mjs'
 
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'client', 'dist')));
+app.use(express.static('client/dist'));
 
 app.use('/audio', audioRouter);
 app.use('/annotations', annotationsRouter);
@@ -55,4 +53,3 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;

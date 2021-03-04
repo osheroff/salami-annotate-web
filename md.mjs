@@ -1,12 +1,12 @@
-const path = require('path');
-const csv = require('csv-parser');
-const fs = require('fs');
+import path from 'path'
+import csv from 'csv-parse'
+import fs from 'fs'
 
-const mdPath = path.join(__dirname, 'metadata.csv')
+const mdPath = new URL('metadata.csv', import.meta.url)
 
 export default {
   readRows: function(onRow, onEnd) {
-    fs.createReadStream('mdPath')
+    fs.createReadStream(mdPath)
       .pipe(csv())
       .on('data', (row) => {
         cb(row)

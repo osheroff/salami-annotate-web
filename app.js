@@ -1,12 +1,15 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-let audioRouter = require('./routes/audio');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const audioRouter = require('./routes/audio');
+const annotationsRouter = require('./routes/annotations');
+
+const md = require('./md')
 
 var app = express();
 
@@ -20,9 +23,21 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'client', 'dist')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/audio', audioRouter);
+app.use('/annotations', annotationsRouter);
+
+app.get('/songs.json', (req, res) =>  {
+  let rows = []
+  md.readRows(r => rows.push(r), () => res.json(rows))
+})
+
+app.get('/', (req, res) =>  {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'))
+});
+
+app.get('/song/:id', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'))
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -13,9 +13,10 @@ import WaveSurfer from 'wavesurfer.js'
 import Markers from "wavesurfer.js/dist/plugin/wavesurfer.markers"
 
 export default {
-  props: ["id", "annotations"],
+  props: ["id"],
   data() {
     return {
+      annotations: null,
       wavesurfer: null
     }
   },
@@ -28,24 +29,32 @@ export default {
     this.wavesurfer = WaveSurfer.create({
       container: this.$el.children[0],
       plugins: [
-        Markers.create({
-          markers: [
-            {
-              time: 5.5,
-              label: "V1",
-              color: '#ff990a'
-            },
-            {
-              time: 10,
-              label: "V2",
-              color: '#00ffcc',
-              position: 'top'
-            }
-          ]
-        })
+        Markers.create()
       ]
     })
     this.wavesurfer.load('/audio/' + this.id)
+    fetch('/annotations/' + this.id)
+      .then(r => r.json())
+      .then(j => {
+        this.annotations = j
+        j.forEach(a => {
+          let pos, color
+          let firstLetter = a.label[0]
+          if ( firstLetter.toUpperCase() == firstLetter ) {
+            pos = 'top'
+            color = '#ff990a'
+          } else {
+            pos= 'bottom'
+            color = '#aa23ff'
+          }
+          this.wavesurfer.markers.add({
+            time: a.time,
+            position: pos,
+            color: color,
+            label: a.label
+          })
+        })
+      })
   }
 }
 </script>

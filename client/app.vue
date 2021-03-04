@@ -1,12 +1,5 @@
 <template>
   <div>
-    <waveform id="10"/>
+    <router-view></router-view>
   </div>
 </template>
-
-<script>
-import Waveform from './waveform.vue'
-export default {
-  components: { Waveform }
-}
-</script>

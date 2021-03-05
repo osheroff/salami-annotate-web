@@ -1,7 +1,7 @@
 
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Vuetable from 'vuetable-2'
+import Vuetable from "vuetable-2/src/components/Vuetable.vue"
 
 import App from './app.vue'
 import Home from './home.vue'

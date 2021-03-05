@@ -11,6 +11,7 @@ import annotationsRouter from './routes/annotations.mjs'
 import md from './md.mjs'
 
 var app = express();
+const root = new URL(import.meta.url)
 
 // view engine setup
 app.set('view engine', 'jade');
@@ -30,7 +31,7 @@ app.get('/songs.json', (req, res) =>  {
 })
 
 app.get('/', (req, res) =>  {
-  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'))
+  res.sendFile(new URL('client/dist/index.html', import.meta.url))
 });
 
 app.get('/song/:id', (req, res) => {
@@ -53,3 +54,4 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+export default app

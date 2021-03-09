@@ -8,7 +8,7 @@ import indexRouter from './routes/index.mjs'
 import audioRouter from './routes/audio.mjs'
 import annotationsRouter from './routes/annotations.mjs'
 
-import md from './md.mjs'
+import md from './lib/md.mjs'
 import fileExists from './lib/file_exists.mjs'
 
 var app = express();
@@ -29,18 +29,6 @@ app.use('/annotations', annotationsRouter);
 
 import { findAudioFile } from './lib/audio.mjs'
 
-
-/*
- * "pagination": {
-      "total": 50,
-      "per_page": 15,
-      "current_page": 1,
-      "last_page": 4,
-      "next_page_url": "...",
-      "prev_page_url": "...",
-      "from": 1,
-      "to": 15,
-    } */
 
 app.get('/songs.json', async (req, res) =>  {
   let json = {data: [], links: { pagination: {}}}

@@ -68,6 +68,9 @@ export default {
     },
     zoom(ev) {
       this.wavesurfer.zoom(Number(ev.target.value))
+    },
+    playheadTime() {
+      return this.wavesurfer.playhead.playheadTime
     }
   },
   watch: {
@@ -78,14 +81,9 @@ export default {
 
         value.forEach(a => {
           let pos, color
-          let firstLetter = a.label[0]
-          if ( firstLetter.toUpperCase() == firstLetter ) {
-            pos = 'top'
-            color = '#ff990a'
-          } else {
-            pos= 'bottom'
-            color = '#aa23ff'
-          }
+          pos = 'top'
+          color = '#ff990a'
+
           this.wavesurfer.markers.add({
             time: a.time,
             position: pos,

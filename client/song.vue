@@ -1,6 +1,8 @@
 <template>
-  <div>
-    <waveform :id="$route.params.id" :annotations="annotations" ref="waveform" @time="setTime"/>
+  <div class="song-container">
+    <GlobalEvents
+      @keydown.prevent.m="addMarker"/>
+    <waveform class="waveform-container" :id="$route.params.id" :annotations="annotations" ref="waveform" @time="setTime"/>
     <div class="annotations-container">
       <div class="files-list">
         <div v-for="f in available" :key="f">
@@ -13,6 +15,7 @@
           <div>
             <a href="#" @click.prevent="deleteAt(idx)"><i class="far fa-minus-square"/></a>
             <a href="#" @click.prevent="editAnnotation = idx"><i class="far fa-edit"/></a>
+            <a href="#" @click.prevent="a.time = $refs.waveform.playheadTime()"><i class="fas fa-arrow-up"/></a>
           </div>
           <div style="flex-grow:1">
             <div v-if="editAnnotation == idx">
@@ -28,20 +31,32 @@
         <input type="text" placeholder="adjustment" v-model="adjustment"> <button @click="adjust">Adjust Times</button>
       </div>
       <div>
+      </div>
+      <div>
         <button @click="save">Save</button>
         {{ saveNotification }}
+        <button @click="annotations = []">CLEAR</button>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.fa-edit {
+.fa-edit,.fa-arrow-up {
   margin-left: 5px;
+}
+
+.song-container {
+  margin: 30px;
 }
 
 .annotations-container {
   max-width: 800px;
+}
+
+.waveform-container {
+  border: 1px solid #ccc;
+  padding: 10px;
 }
 
 .annotations {
@@ -81,6 +96,8 @@
 
 <script>
 import Waveform from './waveform.vue'
+import GlobalEvents from 'vue-global-events';
+
 export default {
   data() {
     return {
@@ -103,6 +120,9 @@ export default {
         })
       })
       response.json().then(d => this.saveNotification = d.status)
+    },
+    addMarker() {
+      this.annotations.push({time: this.time, label: ""})
     },
     setTime(ev) {
       this.time = ev
@@ -152,6 +172,6 @@ export default {
       return -1
     }
   },
-  components: { Waveform }
+  components: { Waveform, GlobalEvents }
 }
 </script>

@@ -9,6 +9,9 @@ module.exports = {
       },
       '^/annotations/.*': {
         target: 'http://localhost:3000'
+      },
+      '^/upload.json': {
+        target: 'http://localhost:3000'
       }
     }
   }

@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div class="header">
+      <router-link to="/upload">Upload a song</router-link>
+    </div>
     <vuetable ref="vuetable"
       class="song-table"
       :initial-page="initialPage"

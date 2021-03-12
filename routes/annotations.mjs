@@ -7,17 +7,25 @@ import { fileURLToPath } from 'url'
 
 var router = express.Router()
 
-/* GET home page. */
 router.get('/:id', function(req, res, next) {
   let id = req.params.id
   let basePath = new URL(`../annotations/${id}/parsed/`, import.meta.url)
   let fileParam = req.query.file
 
-  filesExist(basePath, 'textfile3_uppercase.txt', 'textfile1_uppercase.txt', 'textfile2_uppercase.txt').then(files => {
+  filesExist(basePath, 'textfile3_uppercase.txt', 'textfile1_uppercase.txt', 'textfile2_uppercase.txt', 'predicted.txt').then(files => {
+    if ( files.length == 0 ) {
+      return res.json({
+        available: [],
+        file: null,
+        annotations: []
+      })
+    }
+
     let chosen = files.find(f => path.basename(fileURLToPath(f)) == fileParam)
 
-    if ( chosen == null )
+    if ( chosen == null ) {
       chosen = files[0]
+    }
 
     let output = {
       available: files.map(f => path.basename(fileURLToPath(f))),
@@ -44,9 +52,13 @@ router.get('/:id', function(req, res, next) {
   })
 });
 
-router.post('/:id', function(req, res, next) {
+router.post('/:id', async function(req, res, next) {
   let id = req.params.id
-  let u = new URL(`../annotations/${id}/parsed/textfile3_uppercase.txt`, import.meta.url)
+
+  let path = new URL(`../annotations/${id}/parsed/`, import.meta.url)
+  await fsPromises.mkdir(path, { recursive: true })
+
+  let u = new URL('textfile3_uppercase.txt', path)
 
   let stream = fs.createWriteStream(u, { encoding: 'utf8' })
 

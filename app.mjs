@@ -4,12 +4,16 @@ import path from 'path'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 
+import multer from 'multer'
+const upload = multer({dest: 'uploads/'})
+
 import indexRouter from './routes/index.mjs'
 import audioRouter from './routes/audio.mjs'
 import annotationsRouter from './routes/annotations.mjs'
 
 import md from './lib/md.mjs'
 import fileExists from './lib/file_exists.mjs'
+import fsPromises from 'fs/promises'
 
 var app = express();
 const root = new URL(import.meta.url)
@@ -23,12 +27,30 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static('client/dist'));
 
+
 app.use('/audio', audioRouter);
 app.use('/annotations', annotationsRouter);
 
 
 import { findAudioFile } from './lib/audio.mjs'
 
+app.post('/upload.json', upload.single('audio'), async (req, res) => {
+  let id = await md.nextID()
+
+  let ext = req.file.originalname.split('.')[1]
+  let newPath = new URL(`audio/${id}.${ext}`, import.meta.url)
+
+  await fsPromises.rename(req.file.path, newPath)
+
+  let data = {
+    song_id: id,
+    title: req.body.title,
+    artist: req.body.artist
+  }
+
+  await md.addMetadata(data)
+  res.json(data)
+})
 
 app.get('/songs.json', async (req, res) =>  {
   let json = {data: [], links: { pagination: {}}}

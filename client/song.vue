@@ -128,7 +128,10 @@ export default {
       response.json().then(d => this.saveNotification = d.status)
     },
     addMarker() {
-      this.annotations.push({time: this.time, label: ""})
+      let a = { time: this.time, label: ""}
+      let index = this.activeAnnotation
+
+      this.annotations.splice(index + 1, 0, a)
     },
     setTime(ev) {
       this.time = ev

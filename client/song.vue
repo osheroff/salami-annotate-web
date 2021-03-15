@@ -2,9 +2,13 @@
   <div class="song-container">
     <GlobalEvents
       @keydown.prevent.m="addMarker"/>
-    <waveform class="waveform-container" :id="$route.params.id" :annotations="annotations" ref="waveform" @time="setTime"/>
+    <div class="song-header">
+      <router-link v-if="song.prev" :to="song.prev.url">&lt;&lt; {{ song.prev.title }}</router-link>
+      <h3 v-if="song.title">{{ song.title }} by {{ song.artist }}</h3>
+      <router-link v-if="song.next" :to="song.next.url">{{ song.next.title }} &gt;&gt;</router-link>
+    </div>
+    <waveform class="waveform-container" :id="$route.params.id" :annotations="annotations" ref="waveform" @time="setTime" :key="$route.params.id"/>
     <div class="annotations-container">
-      <router-link v-if="nextSong.link" :to="nextSong.href">{{ nextSong.title }}</router-link>
       <div class="files-list">
         <div v-for="f in available" :key="f">
           <span v-if="f == file">{{ f }}</span>
@@ -44,12 +48,19 @@
 </template>
 
 <style scoped>
+.song-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .fa-edit,.fa-arrow-up {
   margin-left: 5px;
 }
 
 .song-container {
   margin: 30px;
+  margin-top: 10px;
 }
 
 .annotations-container {
@@ -104,9 +115,12 @@ export default {
   data() {
     return {
       time: -1,
-      nextSong: {
+      song: {
         title: null,
-        link: null
+        artist: null,
+        url: null,
+        next: null,
+        prev: null
       },
       adjustment: 0,
       editAnnotation: null,
@@ -151,6 +165,11 @@ export default {
     seek(time) {
       this.$refs.waveform.seek(parseFloat(time))
     },
+    fetchSongInfo() {
+      fetch(`/songs/${this.id}.json`)
+        .then(r => r.json())
+        .then(j => this.song = j)
+    },
     fetchAnnotations() {
       fetch('/annotations/' + this.id + "?file=" + this.file)
         .then(r => r.json())
@@ -172,10 +191,14 @@ export default {
   },
   watch: {
     id() {
+      this.editAnnotation = null
+      this.saveNotification = ""
+      this.fetchSongInfo()
       this.fetchAnnotations()
     }
   },
   mounted() {
+    this.fetchSongInfo()
     this.fetchAnnotations()
   },
   computed: {

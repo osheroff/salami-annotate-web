@@ -10,6 +10,7 @@ const upload = multer({dest: 'uploads/'})
 import indexRouter from './routes/index.mjs'
 import audioRouter from './routes/audio.mjs'
 import annotationsRouter from './routes/annotations.mjs'
+import songsRouter from './routes/songs.mjs'
 
 import md from './lib/md.mjs'
 import fileExists from './lib/file_exists.mjs'
@@ -30,6 +31,7 @@ app.use(express.static('client/dist'));
 
 app.use('/audio', audioRouter);
 app.use('/annotations', annotationsRouter);
+app.use('/songs', songsRouter);
 
 
 import { findAudioFile } from './lib/audio.mjs'

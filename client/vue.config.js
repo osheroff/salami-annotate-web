@@ -4,13 +4,13 @@ module.exports = {
       '^/audio/.*': {
         target: 'http://localhost:3000'
       },
-      '^/songs.json': {
+      '^/songs.*\.json': {
         target: 'http://localhost:3000'
       },
       '^/annotations/.*': {
         target: 'http://localhost:3000'
       },
-      '^/upload.json': {
+      '^/upload\.json': {
         target: 'http://localhost:3000'
       }
     }

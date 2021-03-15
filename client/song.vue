@@ -4,6 +4,7 @@
       @keydown.prevent.m="addMarker"/>
     <waveform class="waveform-container" :id="$route.params.id" :annotations="annotations" ref="waveform" @time="setTime"/>
     <div class="annotations-container">
+      <router-link v-if="nextSong.link" :to="nextSong.href">{{ nextSong.title }}</router-link>
       <div class="files-list">
         <div v-for="f in available" :key="f">
           <span v-if="f == file">{{ f }}</span>
@@ -36,6 +37,7 @@
         <button @click="save">Save</button>
         {{ saveNotification }}
         <button @click="annotations = []">CLEAR</button>
+        <button @click="doTruncate">Truncate to cursor</button>
       </div>
     </div>
   </div>
@@ -102,6 +104,10 @@ export default {
   data() {
     return {
       time: -1,
+      nextSong: {
+        title: null,
+        link: null
+      },
       adjustment: 0,
       editAnnotation: null,
       saveNotification: "",
@@ -150,6 +156,15 @@ export default {
           this.available = j.available
           this.annotations = j.annotations
         })
+    },
+    async doTruncate() {
+      await fetch(`/audio/truncate/${this.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ truncateAt: this.time })
+      })
+
+      location.reload()
     }
   },
   watch: {

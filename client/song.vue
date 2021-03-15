@@ -7,7 +7,7 @@
       <h3 v-if="song.title">{{ song.title }} by {{ song.artist }}</h3>
       <router-link v-if="song.next" :to="song.next.url">{{ song.next.title }} &gt;&gt;</router-link>
     </div>
-    <waveform class="waveform-container" :id="$route.params.id" :annotations="annotations" ref="waveform" @time="setTime" :key="$route.params.id"/>
+    <waveform class="waveform-container" :id="$route.params.id" :annotations="annotations" ref="waveform" @time="setTime" :key="$route.params.id + keybust"/>
     <div class="annotations-container">
       <div class="files-list">
         <div v-for="f in available" :key="f">
@@ -114,6 +114,7 @@ import GlobalEvents from 'vue-global-events';
 export default {
   data() {
     return {
+      keybust: 0,
       time: -1,
       song: {
         title: null,
@@ -186,7 +187,8 @@ export default {
         body: JSON.stringify({ truncateAt: this.time })
       })
 
-      location.reload()
+
+      this.keybust++
     }
   },
   watch: {

@@ -195,6 +195,7 @@ export default {
     id() {
       this.editAnnotation = null
       this.saveNotification = ""
+      this.file = ""
       this.fetchSongInfo()
       this.fetchAnnotations()
     }
